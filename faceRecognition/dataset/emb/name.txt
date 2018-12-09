@@ -1,0 +1,8 @@
+./dataset/emb_face\huge\huge_1.jpg
+./dataset/emb_face\huge\huge_2.jpg
+./dataset/emb_face\huge\huge_3.jpg
+./dataset/emb_face\huge\huge_4.jpg
+./dataset/emb_face\zhoujielun\zhoujielun_1.jpg
+./dataset/emb_face\zhoujielun\zhoujielun_2.jpg
+./dataset/emb_face\zhoujielun\zhoujielun_3.jpg
+./dataset/emb_face\zhoujielun\zhoujielun_4.jpg
