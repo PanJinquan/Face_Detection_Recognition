@@ -19,20 +19,22 @@ def face_recognition_image(model_path,dataset_path, filename,image_path):
     # 初始化facenet
     face_net=face_recognition.facenetEmbedding(model_path)
 
-    image=image_processing.read_image(image_path)
-    # 进行人脸检测，获得bounding_box
-    bounding_box, points = face_detect.detect_face(image)
-    bounding_box = bounding_box[:,0:4].astype(int)
-    # 获得人脸区域
-    face_images = image_processing.get_crop_images(image,bounding_box,resize_height,resize_width,whiten=True)
-    # image_processing.show_image("face", face_images[0,:,:,:])
-
+    image = image_processing.read_image_gbk(image_path)
+    # 获取 判断标识 bounding_box crop_image
+    bboxes, landmarks = face_detect.detect_face(image)
+    bboxes, landmarks = face_detect.get_square_bboxes(bboxes, landmarks, fixed="height")
+    if bboxes == [] or landmarks == []:
+        print("-----no face")
+        exit(0)
+    print("-----image have {} faces".format(len(bboxes)))
+    face_images = image_processing.get_bboxes_image(image, bboxes, resize_height, resize_width)
+    face_images = image_processing.get_prewhiten_images(face_images)
     pred_emb=face_net.get_embedding(face_images)
-    pred_name=compare_embadding(pred_emb, dataset_emb, names_list)
+    pred_name,pred_score=compare_embadding(pred_emb, dataset_emb, names_list)
     # 在图像上绘制人脸边框和识别的结果
-    bgr_image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
-    image_processing.cv_show_image_text("face_recognition", bgr_image,bounding_box,pred_name)
-    cv2.waitKey(0)
+    show_info=[ n+':'+str(s)[:5] for n,s in zip(pred_name,pred_score)]
+    image_processing.show_image_text("face_recognition", image,bboxes,show_info)
+
 
 def load_dataset(dataset_path,filename):
     '''
@@ -42,25 +44,27 @@ def load_dataset(dataset_path,filename):
     :return:
     '''
     compare_emb=np.load(dataset_path)
-    names_list=file_processing.read_data(filename)
+    names_list=file_processing.read_data(filename,split=False)
     return compare_emb,names_list
 
-def compare_embadding(pred_emb, dataset_emb, names_list):
+def compare_embadding(pred_emb, dataset_emb, names_list,threshold=0.65):
     # 为bounding_box 匹配标签
     pred_num = len(pred_emb)
     dataset_num = len(dataset_emb)
     pred_name = []
+    pred_score=[]
     for i in range(pred_num):
         dist_list = []
         for j in range(dataset_num):
             dist = np.sqrt(np.sum(np.square(np.subtract(pred_emb[i, :], dataset_emb[j, :]))))
             dist_list.append(dist)
         min_value = min(dist_list)
-        if (min_value > 0.65):
+        pred_score.append(min_value)
+        if (min_value > threshold):
             pred_name.append('unknow')
         else:
             pred_name.append(names_list[dist_list.index(min_value)])
-    return pred_name
+    return pred_name,pred_score
 
 if __name__=='__main__':
     model_path='models/20180408-102900'

@@ -79,5 +79,5 @@
       <textMaps />
     </LinkMapSettings>
   </component>
-  <component name="ProjectRootManager" version="2" project-jdk-name="Python 3.5.4 (D:\Anaconda3\envs\tensorflowEnv\python.exe)" project-jdk-type="Python SDK" />
+  <component name="ProjectRootManager" version="2" project-jdk-name="Python 3.6 (tensorflow-cpu)" project-jdk-type="Python SDK" />
 </project>
