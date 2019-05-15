@@ -186,12 +186,12 @@ def get_files_list(file_dir, postfix=None):
     :param postfix: ['*.jpg','*.png'],postfix=None表示全部文件
     :return:
     '''
-    postfix = [p.split('.')[-1] for p in postfix ]
     file_list = []
     filePath_list = getFilePathList(file_dir)
     if postfix is None:
         file_list = filePath_list
     else:
+        postfix = [p.split('.')[-1] for p in postfix]
         for file in filePath_list:
             basename = os.path.basename(file)  # 获得路径下的文件名
             postfix_name = basename.split('.')[-1]
