@@ -15,7 +15,7 @@ from scipy import misc
 import tensorflow as tf
 import numpy as np
 import os
-from utils import file_processing,image_processing
+from utils import file_processing,image_processing,debug
 import face_recognition
 import predict
 resize_width = 160
@@ -30,7 +30,7 @@ def face_recognition_for_bzl(model_path,test_dataset, filename):
     # 初始化facenet
     face_net=face_recognition.facenetEmbedding(model_path)
 
-    #获得测试图片的路径和label
+    # 获得测试图片的路径和label
     filePath_list, label_list=file_processing.gen_files_labels(test_dataset)
     label_list=[name.split('_')[0] for name in label_list]
     print("filePath_list:{},label_list{}".format(len(filePath_list),len(label_list)))
@@ -44,21 +44,25 @@ def face_recognition_for_bzl(model_path,test_dataset, filename):
         # 读取图片
         image = image_processing.read_image_gbk(image_path)
         # 人脸检测
+        T0=debug.TIME()
         bboxes, landmarks = face_detect.detect_face(image)
         bboxes, landmarks =face_detect.get_square_bboxes(bboxes, landmarks,fixed="height")
+        T1=debug.TIME()
+
         if bboxes == [] or landmarks == []:
             print("-----no face")
             continue
         if len(bboxes) >= 2 or len(landmarks) >= 2:
             print("-----image have {} faces".format(len(bboxes)))
             continue
+        T2=debug.TIME()
         # 获得人脸框区域
         face_images = image_processing.get_bboxes_image(image, bboxes, resize_height, resize_width)
         face_images = image_processing.get_prewhiten_images(face_images,normalization=True)
         # face_images = image_processing.get_prewhiten_images(face_images,normalization=True)
-
         pred_emb=face_net.get_embedding(face_images)
-        pred_name,pred_score=predict.compare_embadding(pred_emb, dataset_emb, names_list,threshold=1.3)
+        T3=debug.TIME()
+        pred_name,pred_score=predict.compare_embadding(pred_emb, dataset_emb, names_list,threshold=1.14)
         # 在图像上绘制人脸边框和识别的结果
         # show_info = [n + ':' + str(s)[:5] for n, s in zip(pred_name, pred_score)]
         # image_processing.show_image_text("face_recognition", image, bboxes, show_info)
@@ -71,8 +75,11 @@ def face_recognition_for_bzl(model_path,test_dataset, filename):
         else:
             wrong_num += 1
         detection_num += 1
-        print("-------------label_name:{},pred_name:{},score:{:3.4f},status:{}".format(label_name, pred_name, pred_score,
-                                                                                       (label_name == pred_name)))
+        print("--detect face time:{}ms,recognition:{}ms,label_name:{},pred_name:{},score:{:3.4f},status:{}".format(debug.RUN_TIME(T1-T0),
+                                                                                                            debug.RUN_TIME(T3-T2),
+                                                                                                            label_name,
+                                                                                                            pred_name,pred_score,
+                                                                                                            (label_name==pred_name)))
     # 准确率
     accuracy = right_num / detection_num
     # 漏检率

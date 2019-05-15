@@ -55,8 +55,8 @@ def get_face_embedding(model_path,files_list, names_list):
         embeddings.append(pred_emb)
         # 可以选择保存image_list或者names_list作为人脸的标签
         # 测试时建议保存image_list，这样方便知道被检测人脸与哪一张图片相似
-        label_list.append(image_path)
-        # label_list.append(name)
+        # label_list.append(image_path)
+        label_list.append(name)
     return embeddings,label_list
 
 def create_face_embedding(model_path,dataset_path,out_emb_path,out_filename):
@@ -68,14 +68,14 @@ def create_face_embedding(model_path,dataset_path,out_emb_path,out_filename):
     :param out_filename: 输出与embeddings一一对应的标签
     :return: None
     '''
-    files_list,names_list=file_processing.gen_files_labels(dataset_path,postfix='jpg')
+    files_list,names_list=file_processing.gen_files_labels(dataset_path,postfix=['*.jpg'])
     embeddings,label_list=get_face_embedding(model_path,files_list, names_list)
     print("label_list:{}".format(label_list))
     print("have {} label".format(len(label_list)))
 
     embeddings=np.asarray(embeddings)
     np.save(out_emb_path, embeddings)
-    file_processing.write_data(out_filename, label_list, model='w')
+    file_processing.write_list_data(out_filename, label_list, mode='w')
 
 def create_face_embedding_for_bzl(model_path,dataset_path,out_emb_path,out_filename):
     '''
@@ -96,7 +96,7 @@ def create_face_embedding_for_bzl(model_path,dataset_path,out_emb_path,out_filen
     print("have {} label".format(len(label_list)))
     embeddings=np.asarray(embeddings)
     np.save(out_emb_path, embeddings)
-    file_processing.write_data(out_filename, label_list, model='w')
+    file_processing.write_data(out_filename, label_list, mode='w')
 
 if __name__ == '__main__':
     model_path = 'models/20180408-102900'

@@ -33,7 +33,7 @@ def face_recognition_image(model_path,dataset_path, filename,image_path):
     pred_name,pred_score=compare_embadding(pred_emb, dataset_emb, names_list)
     # 在图像上绘制人脸边框和识别的结果
     show_info=[ n+':'+str(s)[:5] for n,s in zip(pred_name,pred_score)]
-    image_processing.show_image_text("face_recognition", image,bboxes,show_info)
+    image_processing.show_image_bboxes_text("face_recognition", image,bboxes,show_info)
 
 
 def load_dataset(dataset_path,filename):
@@ -43,9 +43,9 @@ def load_dataset(dataset_path,filename):
     :param filename: labels文件路径路径（name.txt）
     :return:
     '''
-    compare_emb=np.load(dataset_path)
-    names_list=file_processing.read_data(filename,split=False)
-    return compare_emb,names_list
+    embeddings=np.load(dataset_path)
+    names_list=file_processing.read_data(filename,split=None,convertNum=False)
+    return embeddings,names_list
 
 def compare_embadding(pred_emb, dataset_emb, names_list,threshold=0.65):
     # 为bounding_box 匹配标签

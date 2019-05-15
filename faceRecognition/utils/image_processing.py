@@ -135,10 +135,12 @@ def read_image_gbk(filename, resize_height=None, resize_width=None, normalizatio
     :param colorSpace 输出格式：RGB or BGR
     :return: 返回的RGB图片数据
     '''
-
-    # bgr_image = cv2.imread(filename)
-    bgr_image=cv2.imdecode(np.fromfile(filename,dtype=np.uint8),-1)
-    # bgr_image = cv2.imread(filename,cv2.IMREAD_IGNORE_ORIENTATION|cv2.IMREAD_COLOR)
+    with open(filename, 'rb') as f:
+        data = f.read()
+        data = np.asarray(bytearray(data), dtype="uint8")
+        bgr_image = cv2.imdecode(data, cv2.IMREAD_COLOR)
+    # 或者：
+    # bgr_image=cv2.imdecode(np.fromfile(filename,dtype=np.uint8),cv2.IMREAD_COLOR)
     if bgr_image is None:
         print("Warning:不存在:{}", filename)
         return None
@@ -159,6 +161,8 @@ def read_image_gbk(filename, resize_height=None, resize_width=None, normalizatio
         image=image_normalization(image)
     # show_image("src resize image",image)
     return image
+
+
 
 
 def fast_read_image_roi(filename, orig_rect, ImreadModes=cv2.IMREAD_COLOR, normalization=False,colorSpace='RGB'):
@@ -329,7 +333,7 @@ def get_rect_intersection(rec1,rec2):
     h = max(0, y2 - y1)
     return (x1,y1,w,h)
 
-def show_image_text(title,rgb_image, boxes,boxes_name):
+def show_image_bboxes_text(title, rgb_image, boxes, boxes_name):
     '''
     :param boxes_name:
     :param bgr_image: bgr image
@@ -338,12 +342,23 @@ def show_image_text(title,rgb_image, boxes,boxes_name):
     '''
     bgr_image = cv2.cvtColor(rgb_image, cv2.COLOR_RGB2BGR)
     for name ,box in zip(boxes_name,boxes):
+        box=[int(b) for b in box]
         cv2.rectangle(bgr_image, (box[0],box[1]),(box[2],box[3]), (0, 255, 0), 2, 8, 0)
-        cv2.putText(bgr_image,name, (box[0],box[1]), cv2.FONT_HERSHEY_COMPLEX_SMALL, 0.8, (0, 0, 255), thickness=2)
+        cv2.putText(bgr_image,name, (box[0],box[1]), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 0, 255), thickness=2)
     # cv2.imshow(title, bgr_image)
     # cv2.waitKey(0)
     rgb_image = cv2.cvtColor(bgr_image, cv2.COLOR_BGR2RGB)
     cv_show_image(title, rgb_image)
+
+def show_image_rects_text(title, rgb_image, rects_list, boxes_name):
+    '''
+    :param boxes_name:
+    :param bgr_image: bgr image
+    :param boxes: [[x1,y1,w,h],[x1,y1,w,h]]
+    :return:
+    '''
+    bbox_list = rects2bboxes(rects_list)
+    show_image_bboxes_text(title, rgb_image, bbox_list, boxes_name)
 
 def show_image_rects(win_name,image,rect_list):
     '''
@@ -422,18 +437,27 @@ def combime_save_image(orig_image, dest_image, out_dir,name,prefix):
     dest_image = np.hstack((orig_image, dest_image))
     save_image(os.path.join(out_dir, "{}_src_{}.jpg".format(name,prefix)), dest_image)
 
+def combile_label_prob(label_list,prob_list):
+    '''
+    将label_list和prob_list拼接在一起，以便显示
+    :param label_list:
+    :param prob_list:
+    :return:
+    '''
+    info = [l +":"+ str(p) for l, p in zip(label_list,prob_list)]
+    return info
 if __name__=="__main__":
     # image_path="../dataset/test_images/lena1.jpg"
     # image_path="E:/git/dataset/tgs-salt-identification-challenge/train/my_masks/4.png"
     image_path = 'E:/Face/dataset/bzl/test3/test_dataset/陈思远_716/8205_0.936223.jpg'
 
     # target_rect=main.select_user_roi(target_path)#rectangle=[x,y,w,h]
-    orig_rect = [50, 50, 100000, 10000]
+    # orig_rect = [50, 50, 100000, 10000]
 
     image = read_image_gbk(image_path, resize_height=None, resize_width=None)
-    orig_image=get_rect_image(image,orig_rect)
+    # orig_image=get_rect_image(image,orig_rect)
 
-    show_image_rects("image",image,[orig_rect])
-    show_image("orig_image",orig_image)
+    # show_image_rects("image",image,[orig_rect])
+    show_image("orig_image",image)
 
 
