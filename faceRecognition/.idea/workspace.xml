@@ -1,11 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="d1274d84-d972-40ab-9ed7-53982d325d05" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/batch_test.py" beforeDir="false" afterPath="$PROJECT_DIR$/batch_test.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/utils/file_processing.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils/file_processing.py" afterDir="false" />
-    </list>
+    <list default="true" id="d1274d84-d972-40ab-9ed7-53982d325d05" name="Default" comment="" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -148,7 +144,7 @@
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds" extendedState="6">
+  <component name="ProjectFrameBounds" extendedState="7">
     <option name="x" value="303" />
     <option name="y" value="22" />
     <option name="width" value="1678" />
@@ -353,16 +349,15 @@
       <workItem from="1556520940402" duration="7505000" />
       <workItem from="1557058994971" duration="12609000" />
       <workItem from="1557882102468" duration="1075000" />
-      <workItem from="1557900773045" duration="1298000" />
+      <workItem from="1557900773045" duration="1613000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="56298000" />
+    <option name="totallyTimeSpent" value="56613000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
-    <editor active="true" />
+    <frame x="-8" y="-8" width="1936" height="1056" extended-state="7" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.14179105" />
       <window_info id="Structure" order="1" weight="0.25" />
